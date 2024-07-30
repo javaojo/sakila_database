@@ -22,26 +22,31 @@ public class FilmController {
 
 
     @GetMapping("")
+    @CrossOrigin(origins = "*")
     public List<FilmResponse> getAllFilms() {
         return filmService.getAllFilms();
     }
 
     @GetMapping("/{id}")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<?> getFilmById(@Validated(ValidationGroup.Create.class)@PathVariable Short id) {
         return filmService.getFilmById(id);
     }
 
     @PostMapping("")
+    @CrossOrigin(origins = "*")
     public ResponseEntity createFilm(@RequestBody FilmInput film) {
         return filmService.createFilm(film);
     }
 
     @DeleteMapping("/{id}")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<?> deleteFilm (@Validated(ValidationGroup.Delete.class)@PathVariable short id) {
         return filmService.deleteFilm(id);
     }
 
     @PutMapping("/{id}")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<?> updateFilm(@Validated(ValidationGroup.Create.class) @RequestBody FilmInput newFilm, @PathVariable short id) {
         return filmService.updateFilm(newFilm, id);
     }

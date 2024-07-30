@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/actors")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ActorController {
 
     @Autowired
@@ -29,12 +30,14 @@ public class ActorController {
     // Read Function Service Implemented
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin(origins = "*")
     public List<ActorResponse> readAllActors(){
         return actorService.listActors();
     }
 
     // Read Function Service Implemented
     @GetMapping("/{id}")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<?> findActor (@Validated(ValidationGroup.Create.class)@PathVariable short id) {
         Optional<ActorResponse> optionalActorResponse = actorService.findActor(id);
 
@@ -52,12 +55,14 @@ public class ActorController {
     // Create Function Service Implemented
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
+    @CrossOrigin(origins = "*")
     public Actor createActor (@Validated(ValidationGroup.Create.class) @RequestBody ActorInput data) {
         return actorService.createActor(data);
     }
 
     // Put Function Service Implemented
     @PutMapping("/{id}")
+    @CrossOrigin(origins = "*")
     ResponseEntity<?> replaceActor(@Validated(ValidationGroup.Create.class) @RequestBody ActorInput newActor,@Validated(ValidationGroup.Create.class) @PathVariable short id) {
         Optional<ActorResponse> updatedActorResponse = actorService.replaceActor(newActor, id);
 
@@ -73,6 +78,7 @@ public class ActorController {
     // Delete Function Service Implemented
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CrossOrigin(origins = "*")
     public ResponseEntity<?> deleteActor (@Validated(ValidationGroup.Create.class)@PathVariable short id) {
         boolean isDeleted = actorService.deleteActor(id);
 
