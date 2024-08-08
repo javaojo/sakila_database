@@ -33,7 +33,13 @@ public class ActorService {
     }
 
     public Actor updateActor(ActorInput newActor, short id) {
+
         Optional<Actor> actorToUpdate = actorRepository.findById(id);
+
+        if (newActor.getFirstName().length() < 2 || newActor.getLastName().length() < 2) {
+            throw new IllegalArgumentException("First name and last name must be at least 2 characters long");
+        }
+
 
         if (actorToUpdate.isPresent()) {
             Actor existingActor = actorToUpdate.get();

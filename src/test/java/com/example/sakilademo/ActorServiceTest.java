@@ -12,75 +12,139 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class ActorServiceTest {
 
-//    @Mock
-//    private ActorRepository actorRepository;
-//    @InjectMocks
-//    private ActorService actorService;
-//
-////    @BeforeEach
-////    void setUp() {
-////
-////    }
-//
-//    @Test
-//    void listActors_Should_Return_List_Of_Actor_Responses() {
-//        Actor actor1 = new Actor();
-//        actor1.setFirstName("John");
-//        actor1.setLastName("Doe");
-//
-//        Actor actor2 = new Actor();
-//        actor2.setFirstName("Jane");
-//        actor2.setLastName("Doe");
-//
-//        when(actorRepository.findAll()).thenReturn(List.of(actor1, actor2));
-//
-//        List<ActorResponse> actorResponses = actorService.listActors();
-//
-//        assertNotNull(actorResponses);
-//        assertEquals(2, actorResponses.size());
-//        assertEquals("John", actorResponses.get(0).getFirstName());
-//        assertEquals("Jane", actorResponses.get(1).getFirstName());
-//    }
-//
-//    @Test
-//    void replaceActor_Should_Return_Empty_Optional_When_Actor_Does_Not_Exist() {
-//
-//        short actorId = 1;
-//        ActorInput actorInput = new ActorInput();
-//        actorInput.setFirstName("John");
-//        actorInput.setLastName("Doe");
-//
-//        when(actorRepository.findById(actorId)).thenReturn(Optional.empty());
-//
-//        Optional<ActorResponse> actorResponse = actorService.replaceActor(actorInput, actorId);
-//
-//        assertFalse(actorResponse.isPresent());
-//    }
-//
-//    @Test
-//    void findActor_Should_Return_Actor_Response_When_Actor_Exists() {
-//
-//        short actorId = 1;
-//        Actor actor = new Actor();
-//        actor.setId(actorId);
-//        actor.setFirstName("John");
-//        actor.setLastName("Doe");
-//
-//        when(actorRepository.findById(actorId)).thenReturn(Optional.of(actor));
-//
-//        Optional<ActorResponse> actorResponse = actorService.findActor(actorId);
-//
-//        assertTrue(actorResponse.isPresent());
-//        assertEquals("John", actorResponse.get().getFirstName());
-//    }
+    @InjectMocks
+    private ActorService actorService;
+
+    @Mock
+    private ActorRepository actorRepository;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testListActors() {
+
+        List<Actor> actors = new ArrayList<>();
+        actors.add(new Actor());
+        when(actorRepository.findAll()).thenReturn(actors);
+
+        List<Actor> result = actorService.listActors();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testFindActor() {
+
+        short actorId = 1;
+        Actor actor = new Actor();
+        when(actorRepository.findById(actorId)).thenReturn(Optional.of(actor));
+
+        Optional<Actor> result = actorService.findActor(actorId);
+
+        assertTrue(result.isPresent());
+        assertEquals(actor, result.get());
+    }
+
+    @Test
+    void testCreateActor() {
+
+        ActorInput actorInput = new ActorInput();
+        actorInput.setFirstName("John");
+        actorInput.setLastName("Doe");
+        Actor newActor = new Actor();
+        newActor.setFirstName("John");
+        newActor.setLastName("Doe");
+
+        when(actorRepository.save(any(Actor.class))).thenReturn(newActor);
+
+        Actor result = actorService.createActor(actorInput);
+
+        assertNotNull(result);
+        assertEquals("John", result.getFirstName());
+        assertEquals("Doe", result.getLastName());
+    }
+
+    @Test
+    void testUpdateActor() {
+
+        ActorInput actorInput = new ActorInput();
+
+        actorInput.setFirstName("Jane");
+        actorInput.setLastName("Doe");
+
+        Actor existingActor = new Actor();
+        short actorId = 1;
+        existingActor.setId(actorId);
+        existingActor.setFirstName("John");
+        existingActor.setLastName("Doe");
+
+        when(actorRepository.findById(actorId)).thenReturn(Optional.of(existingActor));
+        when(actorRepository.save(any(Actor.class))).thenReturn(existingActor);
+
+        Actor result = actorService.updateActor(actorInput, actorId);
+
+        assertNotNull(result);
+        assertEquals("Jane", result.getFirstName());
+        assertEquals("Doe", result.getLastName());
+    }
+
+    @Test
+    void testDeleteActor() {
+
+        short actorId = 1;
+        Actor actor = new Actor();
+        when(actorRepository.findById(actorId)).thenReturn(Optional.of(actor));
+
+        boolean result = actorService.deleteActor(actorId);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void testDeleteActorNotFound() {
+
+        short actorId = 1;
+        when(actorRepository.findById(actorId)).thenReturn(Optional.empty());
+
+        boolean result = actorService.deleteActor(actorId);
+
+        assertFalse(result);
+        verify(actorRepository, times(0)).delete(any(Actor.class));
+    }
+
+    @Test
+    void updateActorWhenNamesAreTooShort() {
+
+        Actor existingActor = new Actor();
+        short actorId = 1;
+        existingActor.setId(actorId);
+        existingActor.setFirstName("John");
+        existingActor.setLastName("Doe");
+
+        ActorInput actorInput = new ActorInput();
+        actorInput.setFirstName("A");
+        actorInput.setLastName("B");
+
+        when(actorRepository.findById(actorId)).thenReturn(Optional.of(existingActor));
+
+        assertThrows(IllegalArgumentException.class, () -> actorService.updateActor(actorInput, actorId));
+
+        verify(actorRepository, never()).save(any(Actor.class));
+    }
+
 }
