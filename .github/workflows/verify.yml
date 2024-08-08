@@ -3,7 +3,7 @@ name: verify
 on: push
 
 jobs:
-  build:
+  first-job:
     runs-on: windows-latest
     steps:
-      -run: mvn --version
+      - run: mvn --version
