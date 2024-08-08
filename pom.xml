@@ -27,6 +27,8 @@
 		<url/>
 	</scm>
 	<properties>
+		<sonar.organization>javaojo</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
@@ -85,6 +87,12 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
+
+
+
+
+
+
     </dependencies>
 
 	<build>
