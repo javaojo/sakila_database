@@ -3,7 +3,6 @@ package com.example.sakilademo.service;
 import com.example.sakilademo.input.ActorInput;
 import com.example.sakilademo.model.Actor;
 import com.example.sakilademo.repository.ActorRepository;
-import com.example.sakilademo.response.ActorResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,21 +17,12 @@ public class ActorService {
     @Autowired
     private ActorRepository actorRepository;
 
-    public List<ActorResponse> listActors() {
-        return actorRepository.findAll().stream().map(ActorResponse::new).toList();
+    public List<Actor> listActors() {
+        return actorRepository.findAll();
     }
 
-    public Optional<ActorResponse> findActor(short id) {
-
-        Optional<Actor> actorToFind = actorRepository.findById(id);
-
-        if (actorToFind.isPresent()) {
-            // convert actor to ActorResponse
-            ActorResponse actorResponse = new ActorResponse(actorToFind.get());
-            return Optional.of(actorResponse);
-        }
-        // if the actor is not found return an empty Optional
-        return Optional.empty();
+    public Optional<Actor> findActor(short id) {
+        return actorRepository.findById(id);
     }
 
     public Actor createActor(ActorInput data) {
@@ -42,21 +32,16 @@ public class ActorService {
         return actorRepository.save(newActor);
     }
 
-    public Optional<ActorResponse> replaceActor(ActorInput newActor, short id){
-
+    public Actor updateActor(ActorInput newActor, short id) {
         Optional<Actor> actorToUpdate = actorRepository.findById(id);
 
         if (actorToUpdate.isPresent()) {
             Actor existingActor = actorToUpdate.get();
             existingActor.setFirstName(newActor.getFirstName());
             existingActor.setLastName(newActor.getLastName());
-
-            Actor updatedActor = actorRepository.save(existingActor);
-            ActorResponse actorResponse = new ActorResponse(updatedActor);
-
-            return Optional.of(actorResponse);
+            return actorRepository.save(existingActor);
         } else {
-            return Optional.empty();
+            return null;
         }
     }
 

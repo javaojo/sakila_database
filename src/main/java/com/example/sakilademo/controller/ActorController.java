@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -23,30 +24,30 @@ public class ActorController {
     @Autowired
     private ActorService actorService;
 
-//    public ActorController(ActorService actorService) {
-//        this.actorService = actorService;
-//    }
+    public ActorController(ActorService actorService) {
+        this.actorService = actorService;
+    }
 
     // Read Function Service Implemented
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin(origins = "*")
-    public List<ActorResponse> readAllActors(){
-        return actorService.listActors();
+    public ResponseEntity<List<ActorResponse>> readAllActors() {
+        List<Actor> actors = actorService.listActors();
+        List<ActorResponse> actorResponses = actors.stream().map(ActorResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(actorResponses);
     }
 
     // Read Function Service Implemented
     @GetMapping("/{id}")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<?> findActor (@Validated(ValidationGroup.Create.class)@PathVariable short id) {
-        Optional<ActorResponse> optionalActorResponse = actorService.findActor(id);
+    public ResponseEntity<?> findActor(@PathVariable short id) {
+        Optional<Actor> optionalActor = actorService.findActor(id);
 
-        if (optionalActorResponse.isPresent()) {
-            // return it with HTTP 200 OK status
-            ActorResponse actorResponse = optionalActorResponse.get();
+        if (optionalActor.isPresent()) {
+            ActorResponse actorResponse = new ActorResponse(optionalActor.get());
             return ResponseEntity.ok(actorResponse);
         } else {
-            // return HTTP 404 NOT FOUND status
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Actor not found with id: " + id);
         }
@@ -54,25 +55,25 @@ public class ActorController {
 
     // Create Function Service Implemented
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
     @CrossOrigin(origins = "*")
-    public Actor createActor (@Validated(ValidationGroup.Create.class) @RequestBody ActorInput data) {
-        return actorService.createActor(data);
+    public ResponseEntity<?> createActor(@Validated(ValidationGroup.Create.class) @RequestBody ActorInput data) {
+        Actor actorResponse = actorService.createActor(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(actorResponse);
     }
 
     // Put Function Service Implemented
     @PutMapping("/{id}")
     @CrossOrigin(origins = "*")
-    ResponseEntity<?> replaceActor(@Validated(ValidationGroup.Create.class) @RequestBody ActorInput newActor,@Validated(ValidationGroup.Create.class) @PathVariable short id) {
-        Optional<ActorResponse> updatedActorResponse = actorService.replaceActor(newActor, id);
+    public ResponseEntity<?> updateActor(@Validated(ValidationGroup.Create.class) @RequestBody ActorInput newActor, @PathVariable short id) {
+        Actor updatedActor = actorService.updateActor(newActor, id);
 
-        if (updatedActorResponse.isPresent()) {
-            return ResponseEntity.ok(updatedActorResponse.get());
+        if (updatedActor != null) {
+            ActorResponse actorResponse = new ActorResponse(updatedActor);
+            return ResponseEntity.ok(actorResponse);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No matching actor to update exists.");
         }
-
     }
 
     // Delete Function Service Implemented
