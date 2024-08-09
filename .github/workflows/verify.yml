@@ -3,7 +3,7 @@ name: Maven Verify
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -18,5 +18,5 @@ jobs:
         with:
           java-version: '21'
 
-      - name: Run mvn verify
-        run: mvn verify
+      - name: Build and Test with Maven
+        run: mvn clean verify
