@@ -26,6 +26,11 @@ class FilmServiceTest {
     @Mock
     private LanguageRepository languageRepository;
 
+
+    @Mock
+    private FilmInput filmInput;
+
+
     @InjectMocks
     private FilmService filmService;
 
@@ -134,4 +139,67 @@ class FilmServiceTest {
 
         assertTrue(result);
     }
+
+
+
+    @Test
+    void updateFilmShouldThrowExceptionWhenFilmDoesNotExist() {
+
+        short filmId = 1;
+        FilmInput filmInput = new FilmInput();
+        filmInput.setTitle("Updated Title");
+
+        when(filmRepository.findById(filmId)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> filmService.updateFilm(filmInput, filmId));
+
+        verify(filmRepository, never()).save(any(Film.class));
+    }
+
+    @Test
+    void updateFilmShouldThrowExceptionWhenLanguageNotFound() {
+
+        short filmId = 1;
+        FilmInput filmInput = new FilmInput();
+        filmInput.setTitle("Updated Title");
+        filmInput.setLanguageId((short) 10);
+
+        Film film = new Film();
+        when(filmRepository.findById(filmId)).thenReturn(Optional.of(film));
+        when(languageRepository.findById(filmInput.getLanguageId())).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> filmService.updateFilm(filmInput, filmId));
+
+        verify(filmRepository, never()).save(any(Film.class));
+    }
+
+    @Test
+    void deleteFilmShouldReturnFalseWhenFilmDoesNotExist() {
+
+        short filmId = 1;
+
+        when(filmRepository.findById(filmId)).thenReturn(Optional.empty());
+
+        boolean result = filmService.deleteFilm(filmId);
+
+        assertFalse(result);
+        verify(filmRepository, never()).delete(any(Film.class));
+    }
+
+    @Test
+    void createFilmShouldThrowExceptionWhenLanguageIdIsNull() {
+
+        FilmInput filmInput = new FilmInput();
+        filmInput.setTitle("Test Film");
+
+        assertThrows(IllegalArgumentException.class, () -> filmService.createFilm(filmInput));
+
+        verify(filmRepository, never()).save(any(Film.class));
+    }
+
+
+
+
+
+
 }

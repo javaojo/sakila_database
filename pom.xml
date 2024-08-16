@@ -119,6 +119,7 @@
 					<excludes>
 						<exclude>com/example/sakilademo/response/**</exclude>
 						<exclude>com/example/sakilademo/input/**</exclude>
+						<exclude>com/example/sakilademo/utility/**</exclude>
 <!--						<exclude>com/example/sakilademo/model/**</exclude>-->
 						<exclude>com/example/sakilademo/SakilademoApplication.class</exclude>
 					</excludes>
