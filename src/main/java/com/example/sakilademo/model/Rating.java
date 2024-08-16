@@ -18,19 +18,5 @@ public enum Rating {
         this.displayName = displayName;
     }
 
-//    public static Rating fromDisplayName(String displayName) {
-//
-//        // loop over all the values of the Rating enum
-//
-//        for (Rating rating : Rating.values()) {
-//            // check if the current rating's displayName matches the input displayName
-//            if (rating.displayName.equals(displayName)) {
-//
-//                // if a match is found it returns the matching Rating enum value
-//                return rating;
-//            }
-//        }
-//        throw new IllegalArgumentException("No enum value for display name: " + displayName);
-//    }
 }
 
