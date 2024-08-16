@@ -1,12 +1,15 @@
 package com.example.sakilademo.controller;
 
+
 import com.example.sakilademo.model.Film;
 import com.example.sakilademo.response.FilmResponse;
 import com.example.sakilademo.service.FilmService;
+import com.example.sakilademo.utility.ValidationGroup;
 import com.example.sakilademo.input.FilmInput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -15,16 +18,20 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")
-@CrossOrigin(origins = "*")
 public class FilmController {
+
 
     @Autowired
     private FilmService filmService;
 
+
     @GetMapping("")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<List<FilmResponse>> getAllFilms() {
+
         List<Film> films = filmService.getAllFilms();
         List<FilmResponse> filmResponses = new ArrayList<>();
+
 
         for (Film film : films) {
             FilmResponse filmResponse = new FilmResponse(film);
@@ -35,31 +42,35 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FilmResponse> getFilmById(@PathVariable Short id) {
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<?> getFilmById(@PathVariable Short id) {
         Optional<Film> film = filmService.getFilmById(id);
 
+        // Check if the film is present
         if (film.isPresent()) {
-            FilmResponse filmResponse = new FilmResponse(film.get());
+            Film f = film.get();
+            FilmResponse filmResponse = new FilmResponse(f);
             return ResponseEntity.ok(filmResponse);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(null);
+                    .body("Film not found with id: " + id);
         }
     }
 
     @PostMapping("")
-    public ResponseEntity<FilmResponse> createFilm(@RequestBody FilmInput filmInput) {
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<?> createFilm(@RequestBody FilmInput filmInput) {
         try {
             Film createdFilm = filmService.createFilm(filmInput);
-            FilmResponse filmResponse = new FilmResponse(createdFilm);
-            return ResponseEntity.ok(filmResponse);
+            return ResponseEntity.ok(new FilmResponse(createdFilm));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteFilm(@PathVariable short id) {
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<?> deleteFilm(@PathVariable short id) {
         boolean deleted = filmService.deleteFilm(id);
         if (deleted) {
             return ResponseEntity.ok("Film deleted");
@@ -69,13 +80,16 @@ public class FilmController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FilmResponse> updateFilm(@RequestBody FilmInput newFilm, @PathVariable short id) {
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<?> updateFilm(@RequestBody FilmInput newFilm, @PathVariable short id) {
         try {
             Film updatedFilm = filmService.updateFilm(newFilm, id);
-            FilmResponse filmResponse = new FilmResponse(updatedFilm);
-            return ResponseEntity.ok(filmResponse);
+            return ResponseEntity.ok(new FilmResponse(updatedFilm));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
+
 }

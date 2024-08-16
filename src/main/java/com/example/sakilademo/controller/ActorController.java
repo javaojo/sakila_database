@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -33,15 +34,14 @@ public class ActorController {
     @CrossOrigin(origins = "*")
     public ResponseEntity<List<ActorResponse>> readAllActors() {
         List<Actor> actors = actorService.listActors();
-        List<ActorResponse> actorResponses = actors.stream().map(ActorResponse::new).toList();
-
+        List<ActorResponse> actorResponses = actors.stream().map(ActorResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(actorResponses);
     }
 
     // Read Function Service Implemented
     @GetMapping("/{id}")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<ActorResponse> findActor(@PathVariable short id) {
+    public ResponseEntity<?> findActor(@PathVariable short id) {
         Optional<Actor> optionalActor = actorService.findActor(id);
 
         if (optionalActor.isPresent()) {
@@ -49,23 +49,22 @@ public class ActorController {
             return ResponseEntity.ok(actorResponse);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(null);
+                    .body("Actor not found with id: " + id);
         }
     }
 
     // Create Function Service Implemented
     @PostMapping("")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<ActorResponse> createActor(@Validated(ValidationGroup.Create.class) @RequestBody ActorInput data) {
-        Actor actor = actorService.createActor(data);
-        ActorResponse actorResponse = new ActorResponse(actor);
+    public ResponseEntity<?> createActor(@Validated(ValidationGroup.Create.class) @RequestBody ActorInput data) {
+        Actor actorResponse = actorService.createActor(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(actorResponse);
     }
 
     // Put Function Service Implemented
     @PutMapping("/{id}")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<ActorResponse> updateActor(@Validated(ValidationGroup.Create.class) @RequestBody ActorInput newActor, @PathVariable short id) {
+    public ResponseEntity<?> updateActor(@Validated(ValidationGroup.Create.class) @RequestBody ActorInput newActor, @PathVariable short id) {
         Actor updatedActor = actorService.updateActor(newActor, id);
 
         if (updatedActor != null) {
@@ -73,7 +72,7 @@ public class ActorController {
             return ResponseEntity.ok(actorResponse);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(null);
+                    .body("No matching actor to update exists.");
         }
     }
 
@@ -81,7 +80,7 @@ public class ActorController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CrossOrigin(origins = "*")
-    public ResponseEntity<String> deleteActor(@Validated(ValidationGroup.Create.class) @PathVariable short id) {
+    public ResponseEntity<?> deleteActor (@Validated(ValidationGroup.Create.class)@PathVariable short id) {
         boolean isDeleted = actorService.deleteActor(id);
 
         if (isDeleted) {
@@ -91,4 +90,5 @@ public class ActorController {
                     .body("No matching actor to delete exists.");
         }
     }
+
 }

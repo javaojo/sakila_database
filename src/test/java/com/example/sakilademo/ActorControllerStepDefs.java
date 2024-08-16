@@ -175,6 +175,46 @@ public class ActorControllerStepDefs {
         assertEquals("No matching actor to delete exists.", actualOutput.getBody());
     }
 
+
+
+
+//    @Given("a valid ActorInput request body")
+//    public void aValidActorInputRequestBody() {
+//
+//    }
+//
+//    @When("a POST request is made to actors collection")
+//    public void aPOSTRequestIsMadeToActorsCollection() {
+//
+//    }
+//
+//    @Then("an ActorDetailsOutput is returned")
+//    public void anActprDetailsOutputIsReturned() {
+//
+//    }
+//
+//    @And("the status code is {int}")
+//    public void theStatusCodeIs(int arg0) {
+//
+//    }
+//
+//    @Given("no actor exists with ID {int}")// change id fto shott
+//    public void noActorExistsWithID(int arg0) {
+//        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+//
+//
+//    }
+//
+//    @Then("a ResponseStatusException is thrown")
+//    public void aResponseStatusExceptionIsThrown() {
+//
+//    }
+//
+//    @And("the status code {int}")
+//    public void theStatusCode(int arg0) {
+//    }
+
+
 }
 
 
