@@ -27,10 +27,6 @@ class FilmServiceTest {
     private LanguageRepository languageRepository;
 
 
-    @Mock
-    private FilmInput filmInput;
-
-
     @InjectMocks
     private FilmService filmService;
 
