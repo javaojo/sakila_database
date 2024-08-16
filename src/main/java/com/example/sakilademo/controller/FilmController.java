@@ -4,14 +4,11 @@ package com.example.sakilademo.controller;
 import com.example.sakilademo.model.Film;
 import com.example.sakilademo.response.FilmResponse;
 import com.example.sakilademo.service.FilmService;
-import com.example.sakilademo.utility.ValidationGroup;
 import com.example.sakilademo.input.FilmInput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
